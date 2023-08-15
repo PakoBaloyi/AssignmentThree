@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentThreeApi", "AssignmentThreeApi\AssignmentThreeApi.csproj", "{4E9C6746-6A2E-4EFF-A7CA-CE110775769E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E9C6746-6A2E-4EFF-A7CA-CE110775769E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E9C6746-6A2E-4EFF-A7CA-CE110775769E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E9C6746-6A2E-4EFF-A7CA-CE110775769E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E9C6746-6A2E-4EFF-A7CA-CE110775769E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5BA908CE-0029-4072-9545-62255A4939DE}
+	EndGlobalSection
+EndGlobal

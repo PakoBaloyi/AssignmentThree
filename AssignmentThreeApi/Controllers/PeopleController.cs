@@ -26,7 +26,7 @@ namespace AssignmentThreeApi.Controllers
             }
             return await _dbContext.PersonalDetailsTable.ToListAsync();
         }
-        [HttpGet]
+        [HttpGet("{id}")]
 
         //retrieve a specific personal detail by its ID.
         public async Task<ActionResult<PersonalDetails>> GetAccount(int id)
@@ -45,8 +45,14 @@ namespace AssignmentThreeApi.Controllers
         }
 
         [HttpPost]
-
-        public async Task <ActionResult>
+        public async Task<ActionResult<PersonalDetails>>AddAccount(PersonalDetails details)
+        {
+            _dbContext.PersonalDetailsTable.Add(details);
+             await _dbContext.SaveChangesAsync();
+            // returning single account with the ID
+            return CreatedAtAction(nameof(GetAccount), new {id= details.ID}, details);
+        }
+            
 
 
     }

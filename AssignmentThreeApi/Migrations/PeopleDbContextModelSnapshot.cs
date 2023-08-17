@@ -35,14 +35,16 @@ namespace AssignmentThreeApi.Migrations
                     b.Property<string>("firstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("identityNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("identityNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("lastName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("telephone")
-                        .HasColumnType("int");
+                    b.Property<string>("telephone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 

@@ -10,6 +10,7 @@ namespace AssignmentThreeApi.Controllers
     [ApiController]
     public class PeopleController : ControllerBase
     {
+        //adding dbContext
         private readonly PeopleDbContext _dbContext;
         public PeopleController(PeopleDbContext dbContext)
         {
@@ -17,6 +18,7 @@ namespace AssignmentThreeApi.Controllers
         }
 
         [HttpGet]
+        [Route("GetAccounts")]
         public async Task<ActionResult<IEnumerable<PersonalDetails>>> GetAccounts()
         {
             // checking if there are records in the database
@@ -27,6 +29,7 @@ namespace AssignmentThreeApi.Controllers
             return await _dbContext.PersonalDetailsTable.ToListAsync();
         }
         [HttpGet("{id}")]
+       // [Route("GetAccount")]
 
         //retrieve a specific personal detail by its ID.
         public async Task<ActionResult<PersonalDetails>> GetAccount(int id)
@@ -45,6 +48,7 @@ namespace AssignmentThreeApi.Controllers
         }
 
         [HttpPost]
+       [Route("AddAccount")]
         public async Task<ActionResult<PersonalDetails>>AddAccount(PersonalDetails details)
         {
             _dbContext.PersonalDetailsTable.Add(details);
@@ -52,8 +56,5 @@ namespace AssignmentThreeApi.Controllers
             // returning single account with the ID
             return CreatedAtAction(nameof(GetAccount), new {id= details.ID}, details);
         }
-            
-
-
     }
 }

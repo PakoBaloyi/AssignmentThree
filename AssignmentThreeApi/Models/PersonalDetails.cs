@@ -6,8 +6,8 @@
         public string? firstName { get; set; }
         public string? lastName { get; set; }
         public string? email { get; set; }
-        public int telephone { get; set; }
-        public int identityNumber { get; set; }
+        public string telephone { get; set; }
+        public string identityNumber { get; set; }
     
     }
 }

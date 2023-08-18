@@ -17,6 +17,37 @@ namespace AssignmentThreeApi.Controllers
             _dbContext = dbContext;
         }
 
+       [HttpPost]
+       [Route("AddAccount")]
+        public async Task<ActionResult<PersonalDetails>>AddAccount(PersonalDetails details)
+        {
+            _dbContext.PersonalDetailsTable.Add(details);
+             await _dbContext.SaveChangesAsync();
+            // returning single account with the ID
+            return CreatedAtAction(nameof(GetAccount), new {id= details.ID}, details);
+        }
+        // adding list accounts
+
+        [HttpPost]
+        [Route("AddAccounts")]
+        public async Task<ActionResult<IEnumerable<PersonalDetails>>> AddAccounts(List<PersonalDetails> accountList)
+        {
+            if (_dbContext == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var details in accountList)
+            {
+                _dbContext.PersonalDetailsTable.Add(details);
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetAccounts), accountList);
+        }
+
+        //getting the list of accounts
         [HttpGet]
         [Route("GetAccounts")]
         public async Task<ActionResult<IEnumerable<PersonalDetails>>> GetAccounts()
@@ -28,8 +59,9 @@ namespace AssignmentThreeApi.Controllers
             }
             return await _dbContext.PersonalDetailsTable.ToListAsync();
         }
+
         [HttpGet("{id}")]
-       // [Route("GetAccount")]
+        // [Route("GetAccount")]
 
         //retrieve a specific personal detail by its ID.
         public async Task<ActionResult<PersonalDetails>> GetAccount(int id)
@@ -46,15 +78,49 @@ namespace AssignmentThreeApi.Controllers
             }
             return account;
         }
+        //updating details
 
-        [HttpPost]
-       [Route("AddAccount")]
-        public async Task<ActionResult<PersonalDetails>>AddAccount(PersonalDetails details)
+        [HttpPut("{id}")]
+        //[Route("UpdateAccount")]
+
+        public async Task<IActionResult> PutAccount(int id, PersonalDetails updatedDetails)
         {
-            _dbContext.PersonalDetailsTable.Add(details);
-             await _dbContext.SaveChangesAsync();
-            // returning single account with the ID
-            return CreatedAtAction(nameof(GetAccount), new {id= details.ID}, details);
+            if (_dbContext == null)
+            {
+                return NotFound();
+            }
+
+            if (id != updatedDetails.ID)
+            {
+                return BadRequest();
+            }
+
+            _dbContext.Entry(updatedDetails).State = EntityState.Modified;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AccountExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
+
+        private bool AccountExists(int id)
+        {
+            return _dbContext.PersonalDetailsTable.Any(e => e.ID == id);
+        }
+
+
     }
 }

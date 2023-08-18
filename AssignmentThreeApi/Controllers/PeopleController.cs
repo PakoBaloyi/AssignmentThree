@@ -121,6 +121,25 @@ namespace AssignmentThreeApi.Controllers
             return _dbContext.PersonalDetailsTable.Any(e => e.ID == id);
         }
 
+        //deleting the user
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAccount(int id)
+        {
+            if (_dbContext == null)
+            {
+                return NotFound();
+            }
 
+            var account = await _dbContext.PersonalDetailsTable.FindAsync(id);
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.PersonalDetailsTable.Remove(account);
+            await _dbContext.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

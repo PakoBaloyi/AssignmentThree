@@ -21,6 +21,10 @@ namespace AssignmentThreeApi.Controllers
        [Route("AddAccount")]
         public async Task<ActionResult<PersonalDetails>>AddAccount(PersonalDetails details)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             _dbContext.PersonalDetailsTable.Add(details);
              await _dbContext.SaveChangesAsync();
             // returning single account with the ID

@@ -5,7 +5,7 @@
 namespace AssignmentThreeApi.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,8 +19,8 @@ namespace AssignmentThreeApi.Migrations
                     firstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     lastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    telephone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    identityNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    telephone = table.Column<long>(type: "bigint", nullable: false),
+                    identityNumber = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssignmentThreeApi.Migrations
 {
     [DbContext(typeof(PeopleDbContext))]
-    [Migration("20230817090417_initial")]
-    partial class initial
+    [Migration("20230818124215_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,16 +38,14 @@ namespace AssignmentThreeApi.Migrations
                     b.Property<string>("firstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("identityNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("identityNumber")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("lastName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("telephone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("telephone")
+                        .HasColumnType("bigint");
 
                     b.HasKey("ID");
 

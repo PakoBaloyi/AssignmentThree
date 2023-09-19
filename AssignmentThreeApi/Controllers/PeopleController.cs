@@ -1,6 +1,5 @@
 ﻿using AssignmentThreeApi.Data;
 using AssignmentThreeApi.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,40 +9,50 @@ namespace AssignmentThreeApi.Controllers
     [ApiController]
     public class PeopleController : ControllerBase
     {
-        //adding dbContext
         private readonly PeopleDbContext _dbContext;
-        public PeopleController(PeopleDbContext dbContext)
+        private readonly ILogger<PeopleController> _logger;
+
+        public PeopleController(PeopleDbContext dbContext, ILogger<PeopleController> logger)
         {
-            _dbContext = dbContext;
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-       [HttpPost]
-       [Route("AddAccount")]
-        public async Task<ActionResult<PersonalDetails>>AddAccount(PersonalDetails details)
+        /// <summary>
+        /// Adds a new account.
+        /// </summary>
+        [HttpPost("AddAccount")]
+        public async Task<ActionResult<PersonalDetails>> AddAccount([FromBody] PersonalDetails details)
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Invalid model state");
                 return BadRequest(ModelState);
             }
-            _dbContext.PersonalDetailsTable.Add(details);
-             await _dbContext.SaveChangesAsync();
-            // returning single account with the ID
-            return CreatedAtAction(nameof(GetAccount), new {id= details.ID}, details);
-        }
-        // adding list accounts
 
-        [HttpPost]
-        [Route("AddAccounts")]
-        public async Task<ActionResult<IEnumerable<PersonalDetails>>> AddAccounts(List<PersonalDetails> accountList)
-        {
-            if (_dbContext == null)
+            try
             {
-                return NotFound();
+                AddPersonalDetail(details);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occurred while adding account: {ex}");
+                return StatusCode(500, "Internal server error");
             }
 
+            return CreatedAtAction(nameof(GetAccount), new { id = details.ID }, details);
+        }
+
+        /// <summary>
+        /// Adds multiple accounts.
+        /// </summary>
+        [HttpPost("AddAccounts")]
+        public async Task<ActionResult<IEnumerable<PersonalDetails>>> AddAccounts([FromBody] List<PersonalDetails> accountList)
+        {
             foreach (var details in accountList)
             {
-                _dbContext.PersonalDetailsTable.Add(details);
+                AddPersonalDetail(details);
             }
 
             await _dbContext.SaveChangesAsync();
@@ -51,55 +60,47 @@ namespace AssignmentThreeApi.Controllers
             return CreatedAtAction(nameof(GetAccounts), accountList);
         }
 
-        //getting the list of accounts
+        private void AddPersonalDetail(PersonalDetails details)
+        {
+            _dbContext.PersonalDetailsTable.Add(details);
+        }
+
+        /// <summary>
+        /// Retrieves all accounts.
+        /// </summary>
         [HttpGet]
-        [Route("GetAccounts")]
         public async Task<ActionResult<IEnumerable<PersonalDetails>>> GetAccounts()
         {
-            // checking if there are records in the database
-            if (_dbContext == null)
-            {
-                return NotFound();
-            }
             return await _dbContext.PersonalDetailsTable.ToListAsync();
         }
 
-        [HttpGet("{id}")]
-        // [Route("GetAccount")]
-
-        //retrieve a specific personal detail by its ID.
+        /// <summary>
+        /// Retrieves an account by its ID.
+        /// </summary>
+        [HttpGet("GetAccounts")]
         public async Task<ActionResult<PersonalDetails>> GetAccount(int id)
         {
-            if (_dbContext == null)
-            {
-                return NotFound();
-            }
             var account = await _dbContext.PersonalDetailsTable.FindAsync(id);
-            //checking if the account ID is present
             if (account == null)
             {
                 return NotFound();
             }
+
             return account;
         }
-        //updating details
 
+        /// <summary>
+        /// Updates an account.
+        /// </summary>
         [HttpPut("{id}")]
-        //[Route("UpdateAccount")]
-
-        public async Task<IActionResult> PutAccount(int id, PersonalDetails updatedDetails)
+        public async Task<IActionResult> PutAccount(int id, [FromBody] PersonalDetails updatedDetails)
         {
-            if (_dbContext == null)
-            {
-                return NotFound();
-            }
-
             if (id != updatedDetails.ID)
             {
                 return BadRequest();
             }
 
-            _dbContext.Entry(updatedDetails).State = EntityState.Modified;
+            _dbContext.Update(updatedDetails);
 
             try
             {
@@ -122,18 +123,15 @@ namespace AssignmentThreeApi.Controllers
 
         private bool AccountExists(int id)
         {
-            return _dbContext.PersonalDetailsTable.Any(e => e.ID == id);
+            return _dbContext.PersonalDetailsTable.AnyAsync(e => e.ID == id).Result;
         }
 
-        //deleting the user
+        /// <summary>
+        /// Deletes an account.
+        /// </summary>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAccount(int id)
         {
-            if (_dbContext == null)
-            {
-                return NotFound();
-            }
-
             var account = await _dbContext.PersonalDetailsTable.FindAsync(id);
             if (account == null)
             {
@@ -143,7 +141,7 @@ namespace AssignmentThreeApi.Controllers
             _dbContext.PersonalDetailsTable.Remove(account);
             await _dbContext.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(account);
         }
     }
 }
